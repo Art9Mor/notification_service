@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Text
 from datetime import datetime
 from base import Base
 
+
 class Notification(Base):
     """
     Модель для хранения уведомления
@@ -13,6 +14,7 @@ class Notification(Base):
     delay = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     status = Column(String(50), default='в ожидании')
+
 
 class NotificationLogs(Base):
     """
