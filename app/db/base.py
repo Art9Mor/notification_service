@@ -1,18 +1,19 @@
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
 from app.core.config import settings
 
 Base = declarative_base()
-engine = create_engine(settings.DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_async_engine(settings.DATABASE_URL, echo=True)
+SessionLocal = sessionmaker(bind=engine,
+                            class_=AsyncSession,
+                            expire_on_commit=False
+                            )
 
-def get_db():
+
+async def get_db():
     """
-    Создает и управляет сессией базы данных.
+    Асинхронный контекст менеджера для работы с базой данных.
     """
-    db = SessionLocal()
-    try:
+    async with SessionLocal() as db:
         yield db
-    finally:
-        db.close()

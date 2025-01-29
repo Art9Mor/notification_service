@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel, EmailStr, validator
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel, validator
 from typing import List, Union
 from sqlalchemy.orm import Session
-from app.db.models import Notification, NotificationLogs
+from app.db.models import Notification
 from app.tasks.notifications import send_notification_task
 from app.db.base import get_db
 import re
@@ -64,8 +64,8 @@ async def notify(request: NotificationRequest, db: Session = Depends(get_db)) ->
         delay=request.delay
     )
     db.add(notification)
-    db.commit()
-    db.refresh(notification)
+    await db.commit()
+    await db.refresh(notification)
 
     delay_in_seconds = delay_to_seconds(request.delay)
 
